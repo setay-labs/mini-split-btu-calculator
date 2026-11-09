@@ -906,6 +906,25 @@
           </div>
         </div>
 
+        <!-- DIY Equipment & Contractor Installation Match -->
+        <div class="hvac-equipment-box" style="margin-bottom: 20px; padding: 14px 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px;">
+          <div style="font-weight: 600; font-size: 0.95rem; color: #34d399; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span>❄️ Equipment &amp; Installation Guide</span>
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #6ee7b7;">Procurement</span>
+          </div>
+          <p style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 10px;">
+            Matches your calculated BTU capacity and electrical circuit specifications:
+          </p>
+          <ul style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; padding-left: 18px; margin-bottom: 10px;">
+            <li><strong>DIY Pre-Charged Systems:</strong> Quick-connect line sets (e.g., MRCOOL 4th Gen) eliminate the need for an EPA-certified vacuum pump or nitrogen pressure testing.</li>
+            <li><strong>Required Disconnect:</strong> A 30A non-fused outdoor pullout disconnect and 1/2&quot; liquid-tight whip are required by NEC code adjacent to the condenser.</li>
+            <li><strong>Professional Installation:</strong> If line set runs exceed 25 ft or involve multi-story wall penetrations, request quotes from 2–3 licensed HVAC installers.</li>
+          </ul>
+          <div style="font-size: 0.72rem; color: #94a3b8; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 6px; line-height: 1.4;">
+            <span>ℹ️ <em>Affiliate Disclosure: Setay Labs may earn a referral fee from verified HVAC hardware or contractor quotes at zero cost to you. Calculations remain 100% objective.</em></span>
+          </div>
+        </div>
+
         <!-- Indoor Air Handler Schedule -->
         <div class="procurement-box">
           <div class="procurement-title">Indoor Wall Head Schedule (By Zone)</div>
@@ -1091,6 +1110,80 @@
       var tonsLarge = (Math.ceil(target / 12000)).toFixed(1);
       return { btu: Math.ceil(target / 12000) * 12000, tons: tonsLarge + " Ton" };
     }
+
+    // Layer 1: Pure Calculation Engine exposed for automated verification & unit testing
+    function computeHvacSpec(inputs) {
+      var inp = inputs || {};
+      var baseBtuPerSqFt = clamp(safeNum(inp.baseBtuPerSqFt, 22), 12, 50);
+      var climMult = clamp(safeNum(inp.climateMultiplier, 1.0), 0.7, 1.6);
+      var occupants = clamp(safeNum(inp.occupants, 2), 1, 50);
+      var voltage = safeNum(inp.voltage, 240) === 120 ? 120 : 240;
+      var zoneList = Array.isArray(inp.zones) ? inp.zones : initialZones;
+
+      var totalSqFt = 0;
+      var totalRawBtu = 0;
+      var totalHeadBtu = 0;
+      var extraOccupantBtu = occupants > 2 ? (occupants - 2) * 600 : 0;
+      var occupantSharePerZone = zoneList.length > 0 ? (extraOccupantBtu / zoneList.length) : 0;
+
+      var zoneDetails = zoneList.map(function(z, idx) {
+        var len = clamp(safeNum(z && z.length, 0), 0, 500);
+        var wid = clamp(safeNum(z && z.width, 0), 0, 500);
+        var ceil = clamp(safeNum(z && z.ceiling, 8), 6, 40);
+        var sqFt = len * wid;
+        totalSqFt += sqFt;
+
+        var ceilMult = ceil > 8 ? (1 + ((ceil - 8) * 0.08)) : 1.0;
+        var baseLoad = sqFt * baseBtuPerSqFt * ceilMult * climMult;
+
+        var factor = z && z.factor ? z.factor : "1.0";
+        var zoneBtu = baseLoad;
+        if (factor === "kitchen") {
+          zoneBtu = (baseLoad * 1.05) + 4000;
+        } else {
+          var fMult = safeNum(factor, 1.0);
+          zoneBtu = baseLoad * (fMult > 0 ? fMult : 1.0);
+        }
+
+        zoneBtu += occupantSharePerZone;
+        var roundedZoneBtu = Math.round(zoneBtu);
+        totalRawBtu += roundedZoneBtu;
+
+        var matchedHead = matchIndoorHead(roundedZoneBtu);
+        totalHeadBtu += matchedHead.btu;
+
+        return {
+          name: (z && z.name) || ("Zone " + (idx + 1)),
+          sqFt: sqFt,
+          rawBtu: roundedZoneBtu,
+          headBtu: matchedHead.btu,
+          headLabel: matchedHead.label
+        };
+      });
+
+      var condenser = matchOutdoorCondenser(totalRawBtu, totalHeadBtu);
+      var peakWatts = condenser.btu > 0 ? Math.round(condenser.btu / 11.5) : 0;
+      var runningAmps = voltage > 0 ? (peakWatts / voltage) : 0;
+      var mcaAmps = runningAmps * 1.25;
+
+      return {
+        totalSqFt: totalSqFt,
+        totalRawBtu: totalRawBtu,
+        totalHeadBtu: totalHeadBtu,
+        condenserBtu: condenser.btu,
+        condenserTons: condenser.tons,
+        peakWatts: peakWatts,
+        mcaAmps: mcaAmps,
+        voltage: voltage,
+        zoneDetails: zoneDetails
+      };
+    }
+
+    window.calcEngine = {
+      calculate: computeHvacSpec,
+      matchIndoorHead: matchIndoorHead,
+      matchOutdoorCondenser: matchOutdoorCondenser
+    };
 
     function loadStateFromUrl() {
       try {
