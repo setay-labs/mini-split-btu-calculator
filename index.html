@@ -745,7 +745,184 @@
       border-top: 1px solid var(--card-border);
       text-align: right;
     }
-  </style>
+  
+    /* === Modern Visual Polish & Micro-Interactions === */
+    .stat-value,
+    .stat-sub,
+    .proc-item strong,
+    .summary-list .val,
+    .form-group input,
+    .dock-summary strong,
+    .head-schedule-list strong {
+      font-variant-numeric: tabular-nums lining-nums;
+      letter-spacing: -0.02em;
+    }
+
+    /* Climate Preset Pills */
+    .segmented-control {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      flex-wrap: wrap;
+    }
+
+    .segmented-btn {
+      flex: 1 1 auto;
+      min-height: 34px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .segmented-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .segmented-btn.active {
+      color: #ffffff;
+      background: linear-gradient(145deg, #059669 0%, #10b981 100%);
+      border-color: #34d399;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Outdoor Condenser Sizing Step Track */
+    .tonnage-visual-box {
+      margin-top: 14px;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+    }
+
+    .tonnage-visual-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .tonnage-badge {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .tonnage-steps-track {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+
+    @media (max-width: 480px) {
+      .tonnage-steps-track {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+    }
+
+    .step-pill {
+      font-size: 0.72rem;
+      padding: 6px 2px;
+      text-align: center;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .step-pill.active {
+      background: linear-gradient(145deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      border-color: #34d399;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Mobile Sticky Quick-Dock */
+    .mobile-quick-dock {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-quick-dock {
+        display: flex;
+        position: fixed;
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        z-index: 99;
+        background: rgba(21, 31, 50, 0.94);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(52, 211, 153, 0.35);
+        border-radius: 12px;
+        padding: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .dock-summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        color: #f8fafc;
+      }
+
+      .dock-summary strong {
+        color: #34d399;
+      }
+
+      .dock-summary small {
+        color: #94a3b8;
+        font-size: 0.75rem;
+      }
+
+      .dock-sep {
+        color: #475569;
+      }
+
+      .dock-action-btn {
+        background: #059669;
+        color: #ffffff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background 0.15s ease;
+      }
+
+      .dock-action-btn:hover {
+        background: #047857;
+      }
+    }
+
+</style>
 </head>
 <body>
 
@@ -840,6 +1017,12 @@
               Regional Climate Zone
               <span class="hint">Design Temp</span>
             </label>
+            <div class="segmented-control" role="group" aria-label="Climate zone quick presets" id="climatePills">
+              <button type="button" class="segmented-btn" data-val="0.90">Mild Coastal</button>
+              <button type="button" class="segmented-btn active" data-val="1.00">Moderate</button>
+              <button type="button" class="segmented-btn" data-val="1.15">Hot &amp; Humid</button>
+              <button type="button" class="segmented-btn" data-val="1.20">Cold North</button>
+            </div>
             <select id="climateMultiplier" aria-label="Regional climate zone">
               <option value="0.90">Mild Coastal / Marine (80–85°F Peak &bull; 0.90&times;)</option>
               <option value="1.00" selected>Moderate / Mixed US Climate (90°F Peak &bull; 1.00&times;)</option>
@@ -884,7 +1067,7 @@
     </div>
 
     <!-- Right Column: Output Card & Actions -->
-    <div class="results-column">
+    <div class="results-column" id="resultsColumn">
       <section class="card" aria-labelledby="results-heading" aria-live="polite">
         <div class="card-title" id="results-heading">
           <span>System Sizing &amp; Equipment Specs</span>
@@ -903,6 +1086,22 @@
             <span class="stat-label">Recommended Condenser</span>
             <div class="stat-value" id="statCondenserTon">1.5 Ton</div>
             <div class="stat-sub" id="statCondenserBtu">18,000 BTU Outdoor Unit</div>
+          </div>
+        </div>
+
+        <!-- Outdoor Condenser Sizing Visual Track -->
+        <div class="tonnage-visual-box">
+          <div class="tonnage-visual-header">
+            <span>Outdoor Condenser Sizing Step</span>
+            <span class="tonnage-badge" id="tonnageStepBadge">1.5 Ton Class</span>
+          </div>
+          <div class="tonnage-steps-track" id="tonnageStepsTrack" aria-hidden="true">
+            <div class="step-pill" data-btu="9000">0.75T (9k)</div>
+            <div class="step-pill" data-btu="12000">1.0T (12k)</div>
+            <div class="step-pill active" data-btu="18000">1.5T (18k)</div>
+            <div class="step-pill" data-btu="24000">2.0T (24k)</div>
+            <div class="step-pill" data-btu="30000">2.5T (30k)</div>
+            <div class="step-pill" data-btu="36000">3.0T (36k)</div>
           </div>
         </div>
 
@@ -1043,6 +1242,13 @@
     var zoneCountBadge = document.getElementById("zoneCountBadge");
     var systemTypeBadge = document.getElementById("systemTypeBadge");
 
+    var climatePills = document.getElementById("climatePills");
+    var tonnageStepBadge = document.getElementById("tonnageStepBadge");
+    var tonnageStepsTrack = document.getElementById("tonnageStepsTrack");
+    var dockCondenserTon = document.getElementById("dockCondenserTon");
+    var dockCondenserBtu = document.getElementById("dockCondenserBtu");
+    var dockTotalBtu = document.getElementById("dockTotalBtu");
+    var dockJumpBtn = document.getElementById("dockJumpBtn");
     var statTotalBtu = document.getElementById("statTotalBtu");
     var statSqFtSummary = document.getElementById("statSqFtSummary");
     var statCondenserTon = document.getElementById("statCondenserTon");
@@ -1359,6 +1565,25 @@
       statCondenserTon.textContent = condenser.tons;
       statCondenserBtu.textContent = condenser.btu.toLocaleString("en-US") + " BTU Outdoor Unit";
 
+      // Update Tonnage Step Visualizer
+      if (tonnageStepBadge) tonnageStepBadge.textContent = condenser.tons + " Class";
+      if (tonnageStepsTrack) {
+        var stepPills = tonnageStepsTrack.querySelectorAll(".step-pill");
+        stepPills.forEach(function(p) {
+          var stepBtu = parseInt(p.getAttribute("data-btu"), 10);
+          if (stepBtu === condenser.btu) {
+            p.classList.add("active");
+          } else {
+            p.classList.remove("active");
+          }
+        });
+      }
+
+      // Update Mobile Quick Dock
+      if (dockCondenserTon) dockCondenserTon.textContent = condenser.tons;
+      if (dockCondenserBtu) dockCondenserBtu.textContent = (condenser.btu / 1000) + "k BTU";
+      if (dockTotalBtu) dockTotalBtu.textContent = Math.round(totalRawBtu).toLocaleString("en-US") + " BTU";
+
       rowConnectedHeads.textContent = totalHeadBtu.toLocaleString("en-US") + " BTU/hr (" + zones.length + (zones.length === 1 ? " unit" : " units") + ")";
       rowPeakWatts.textContent = peakWatts.toLocaleString("en-US") + " W (peak load)";
       rowMcaAmps.textContent = mcaAmps.toFixed(1) + " Amps @ " + voltage + "V";
@@ -1653,6 +1878,17 @@
     renderZoneTable();
   })();
 </script>
+
+
+  <!-- Mobile Sticky Quick-Status Dock -->
+  <aside class="mobile-quick-dock" id="mobileQuickDock" aria-label="Mobile quick summary">
+    <div class="dock-summary">
+      <span class="dock-item"><strong id="dockCondenserTon">1.5 Ton</strong> <small id="dockCondenserBtu">18k BTU</small></span>
+      <span class="dock-sep">&bull;</span>
+      <span class="dock-item"><strong id="dockTotalBtu">14,500 BTU</strong> <small>Load</small></span>
+    </div>
+    <a href="#resultsColumn" class="dock-action-btn" id="dockJumpBtn">HVAC Specs &darr;</a>
+  </aside>
 
 </body>
 </html>
