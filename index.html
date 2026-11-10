@@ -922,6 +922,39 @@
       }
     }
 
+
+    .affiliate-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0 6px 0;
+    }
+    @media (max-width: 480px) {
+      .affiliate-links-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .affiliate-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease-in-out;
+    }
+    .affiliate-link-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #34d399;
+      color: #34d399;
+      transform: translateY(-1px);
+    }
+
 </style>
 </head>
 <body>
@@ -1119,6 +1152,20 @@
             <li><strong>Required Disconnect:</strong> A 30A non-fused outdoor pullout disconnect and 1/2&quot; liquid-tight whip are required by NEC code adjacent to the condenser.</li>
             <li><strong>Professional Installation:</strong> If line set runs exceed 25 ft or involve multi-story wall penetrations, request quotes from 2–3 licensed HVAC installers.</li>
           </ul>
+          <div class="affiliate-links-grid">
+            <a href="https://www.amazon.com/s?k=MRCOOL+DIY+mini+split+heat+pump&tag=setaylabs-20" target="_blank" rel="nofollow noopener sponsored" class="affiliate-link-btn" id="linkHvacMatch">
+              <span>❄️ Match DIY Heat Pump &rarr;</span>
+            </a>
+            <a href="https://www.amazon.com/s?k=air+conditioner+disconnect+box+and+whip+kit&tag=setaylabs-20" target="_blank" rel="nofollow noopener sponsored" class="affiliate-link-btn" id="linkDisconnectMatch">
+              <span>⚡ AC Disconnect &amp; Whip &rarr;</span>
+            </a>
+            <a href="https://www.amazon.com/s?k=hvac+surge+protector&tag=setaylabs-20" target="_blank" rel="nofollow noopener sponsored" class="affiliate-link-btn" id="linkSurgeMatch">
+              <span>🛡️ HVAC Surge Protector &rarr;</span>
+            </a>
+            <a href="https://www.amazon.com/s?k=mini+split+wall+mounting+bracket&tag=setaylabs-20" target="_blank" rel="nofollow noopener sponsored" class="affiliate-link-btn" id="linkBracketMatch">
+              <span>🧱 Condenser Wall Bracket &rarr;</span>
+            </a>
+          </div>
           <div style="font-size: 0.72rem; color: #94a3b8; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 6px; line-height: 1.4;">
             <span>ℹ️ <em>Affiliate Disclosure: Setay Labs may earn a referral fee from verified HVAC hardware or contractor quotes at zero cost to you. Calculations remain 100% objective.</em></span>
           </div>
@@ -1249,6 +1296,10 @@
     var dockCondenserBtu = document.getElementById("dockCondenserBtu");
     var dockTotalBtu = document.getElementById("dockTotalBtu");
     var dockJumpBtn = document.getElementById("dockJumpBtn");
+    var linkHvacMatch = document.getElementById("linkHvacMatch");
+    var linkDisconnectMatch = document.getElementById("linkDisconnectMatch");
+    var linkSurgeMatch = document.getElementById("linkSurgeMatch");
+    var linkBracketMatch = document.getElementById("linkBracketMatch");
     var statTotalBtu = document.getElementById("statTotalBtu");
     var statSqFtSummary = document.getElementById("statSqFtSummary");
     var statCondenserTon = document.getElementById("statCondenserTon");
