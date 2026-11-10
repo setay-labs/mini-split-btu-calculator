@@ -1678,12 +1678,42 @@
       showToast("✓ BTU & tonnage recalculated.");
     });
 
+    // Synchronize Climate Presets
+    function syncClimatePills() {
+      if (!climatePills) return;
+      var curVal = String(climateMultiplier.value);
+      var btns = climatePills.querySelectorAll(".segmented-btn");
+      btns.forEach(function(b) {
+        if (b.getAttribute("data-val") === curVal) {
+          b.classList.add("active");
+        } else {
+          b.classList.remove("active");
+        }
+      });
+    }
+
+    if (climatePills) {
+      climatePills.addEventListener("click", function(e) {
+        var btn = e.target.closest(".segmented-btn");
+        if (!btn) return;
+        var val = btn.getAttribute("data-val");
+        if (val) {
+          climateMultiplier.value = val;
+          syncClimatePills();
+          calculateSystem();
+        }
+      });
+    }
+
+    climateMultiplier.addEventListener("change", syncClimatePills);
+
     resetDefaultsBtn.addEventListener("click", function() {
       zones = JSON.parse(JSON.stringify(initialZones));
       insulationQuality.value = "22";
       climateMultiplier.value = "1.00";
       occupantCount.value = "2";
       circuitVoltage.value = "240";
+      syncClimatePills();
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -1875,6 +1905,7 @@
 
     // Initial Render
     loadStateFromUrl();
+    syncClimatePills();
     renderZoneTable();
   })();
 </script>
